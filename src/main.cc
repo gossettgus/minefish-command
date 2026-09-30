@@ -8,6 +8,12 @@
     #include "UnitTestList.h"
 #endif
 
+#ifdef QGC_CUSTOM_BUILD
+    // Qt WebEngine (used by custom builds that embed a WebEngineView) must be initialized before
+    // QGCApplication/QGuiApplication is constructed below.
+    #include "CustomWebEngineInit.h"
+#endif
+
 QGC_LOGGING_CATEGORY_ON(MainLog, "Main")
 
 int main(int argc, char *argv[])
@@ -22,6 +28,10 @@ int main(int argc, char *argv[])
     if (const auto exitCode = Platform::initialize(argc, argv, args)) {
         return *exitCode;
     }
+
+#ifdef QGC_CUSTOM_BUILD
+    CustomWebEngineInit::initializeIfAvailable();
+#endif
 
     QGCApplication app(argc, argv, args);
 
